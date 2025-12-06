@@ -1,0 +1,56 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+from load_data import load_dataset
+from train_models import X_train, X_test, y_train, y_test, extra, pred_extra, df
+
+# Feature Importance Plot
+importances = extra.feature_importances_
+features = X_train.columns
+
+plt.figure(figsize=(8, 6))
+plt.barh(features, importances)
+plt.title("Feature Importance (Extra Trees)")
+plt.tight_layout()
+plt.savefig("figures/FeatureImportance.png")
+
+
+# Correlation Heatmap
+corr = df[features.tolist() + ["Dst_index"]].corr()
+
+plt.figure(figsize=(8, 6))
+sns.heatmap(corr, cmap="coolwarm", annot=False)
+plt.title("Correlation Heatmap")
+plt.tight_layout()
+plt.savefig("figures/Heatmap.png")
+
+
+# Actual vs Predicted Plot
+plt.figure(figsize=(8, 6))
+plt.scatter(y_test, pred_extra, alpha=0.5)
+plt.xlabel("Actual Dst")
+plt.ylabel("Predicted Dst")
+plt.title("Actual vs Predicted Dst (Extra Trees)")
+plt.tight_layout()
+plt.savefig("figures/ActualVsPredicted.png")
+
+
+# Residual Distribution
+residuals = y_test - pred_extra
+
+plt.figure(figsize=(8, 6))
+sns.histplot(residuals, kde=True, bins=50)
+plt.title("Residual Distribution")
+plt.tight_layout()
+plt.savefig("figures/ResidualDistribution.png")
+
+
+# Residuals vs Predicted
+plt.figure(figsize=(8, 6))
+plt.scatter(pred_extra, residuals, alpha=0.5)
+plt.axhline(0, color="red", linestyle="--")
+plt.title("Residuals vs Predicted")
+plt.xlabel("Predicted Dst")
+plt.ylabel("Residuals")
+plt.tight_layout()
+plt.savefig("figures/ResidualsVsPrediction.png")
